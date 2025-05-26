@@ -5,7 +5,7 @@ on:
       - feature_wifi_marauder_app
   pull_request:
   schedule:
-    # do a build every day
+    # Do a build every day
     - cron: "1 1 * * *"
   workflow_dispatch:  # This enables manual triggering from the GitHub UI
 
@@ -38,7 +38,7 @@ jobs:
         with:
           sdk-channel: ${{ matrix.sdk-channel }}
           sdk-index-url: ${{ matrix.sdk-index-url }}
-        continue-on-error: true  # Continue even if the build step fails, to allow debugging
+        continue-on-error: true  # Continue even if the build step fails, useful for debugging
 
       - name: Debug: List contents of build directory
         run: |
@@ -53,18 +53,16 @@ jobs:
       - name: Check if artifacts exist
         run: |
           echo "Checking for artifact directory and files"
-          ls -l ${{ steps.build-app.outputs.fap-artifacts }}
+          ls -l "${{ steps.build-app.outputs.fap-artifacts }}"
 
       - name: Upload app artifacts
-        if: success() && exists('${{ steps.build-app.outputs.fap-artifacts }}')  # Ensure file exists before uploading
+        if: success() && steps.build-app.outputs.fap-artifacts != ''  # Ensure file exists before uploading
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
           path: ${{ steps.build-app.outputs.fap-artifacts }}
 
-      # Add more debug information
       - name: Display build debug information
         run: |
           echo "Build logs:"
           cat ./build/logs/* || echo "No logs found"
-
