@@ -40,12 +40,13 @@ jobs:
           sdk-index-url: ${{ matrix.sdk-index-url }}
         continue-on-error: true  # Continue even if the build step fails, useful for debugging
 
+      # Add Debugging Steps
       - name: Debug List contents of build directory
         run: |
           echo "Listing contents of the build directory"
           ls -l ./build
 
-      - name: Debug Check build output for .fap files
+      - name: Debug Check for .fap files
         run: |
           echo "Searching for .fap files in the build directory"
           find ./build -name "*.fap" || echo "No .fap files found"
