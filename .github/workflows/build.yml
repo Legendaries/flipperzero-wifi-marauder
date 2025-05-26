@@ -45,10 +45,10 @@ jobs:
           echo "Listing contents of the build directory"
           ls -l ./build
 
-      - name: Debug Check build output
+      - name: Debug Check build output for .fap files
         run: |
-          echo "Checking for .fap output"
-          find . -name "*.fap"
+          echo "Searching for .fap files in the build directory"
+          find ./build -name "*.fap" || echo "No .fap files found"
 
       - name: Check if artifacts exist
         run: |
@@ -61,7 +61,7 @@ jobs:
           fi
 
       - name: Upload app artifacts
-        if: ${{ steps.build-app.outputs.fap-artifacts != '' }}  # Corrected syntax to ensure this is properly evaluated
+        if: ${{ steps.build-app.outputs.fap-artifacts != '' }}  # Ensure file exists before uploading
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
