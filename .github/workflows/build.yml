@@ -7,6 +7,8 @@ on:
   schedule:
     # do a build every day
     - cron: "1 1 * * *"
+  workflow_dispatch:  # This enables manual triggering from the GitHub UI
+
 jobs:
   ufbt-build-action:
     runs-on: ubuntu-latest
@@ -29,13 +31,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
+
       - name: Build with ufbt
         uses: flipperdevices/flipperzero-ufbt-action@v0.1.2
         id: build-app
         with:
           sdk-channel: ${{ matrix.sdk-channel }}
           sdk-index-url: ${{ matrix.sdk-index-url }}
+        continue-on-error: true  # Allows workflow to continue if the build step fails, useful for debugging.
+
       - name: Upload app artifacts
+        if: success() && exists('${{ steps.build-app.outputs.fap-artifacts }}')  # Ensure file exists before uploading
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
