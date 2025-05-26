@@ -53,10 +53,15 @@ jobs:
       - name: Check if artifacts exist
         run: |
           echo "Checking for artifact directory and files"
-          ls -l "${{ steps.build-app.outputs.fap-artifacts }}"
+          if [ -d "${{ steps.build-app.outputs.fap-artifacts }}" ]; then
+            echo "Artifact directory exists"
+            ls -l "${{ steps.build-app.outputs.fap-artifacts }}"
+          else
+            echo "Artifact directory does not exist"
+          fi
 
       - name: Upload app artifacts
-        if: success() && steps.build-app.outputs.fap-artifacts != ''  # Ensure file exists before uploading
+        if: ${{ steps.build-app.outputs.fap-artifacts != '' }}  # Ensure file exists before uploading
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
