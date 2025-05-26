@@ -38,7 +38,12 @@ jobs:
         with:
           sdk-channel: ${{ matrix.sdk-channel }}
           sdk-index-url: ${{ matrix.sdk-index-url }}
-        continue-on-error: true  # Allows workflow to continue if the build step fails, useful for debugging.
+        continue-on-error: true  # Allows workflow to continue even if the build step fails, useful for debugging.
+
+      - name: Check if artifacts exist
+        run: |
+          echo "Checking for artifact directory and files"
+          ls -l ${{ steps.build-app.outputs.fap-artifacts }}
 
       - name: Upload app artifacts
         if: success() && exists('${{ steps.build-app.outputs.fap-artifacts }}')  # Ensure file exists before uploading
@@ -46,3 +51,9 @@ jobs:
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
           path: ${{ steps.build-app.outputs.fap-artifacts }}
+
+      # Add more debug information
+      - name: Display debug information
+        run: |
+          echo "Build Outputs:"
+          ls -l ${{ steps.build-app.outputs.fap-artifacts }}
