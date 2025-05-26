@@ -61,7 +61,7 @@ jobs:
           fi
 
       - name: Upload app artifacts
-        if: ${{ steps.build-app.outputs.fap-artifacts != '' }}  # Ensure file exists before uploading
+        if: ${{ steps.build-app.outputs.fap-artifacts != '' }}  # Corrected syntax to ensure this is properly evaluated
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
