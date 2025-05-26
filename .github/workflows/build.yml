@@ -38,7 +38,17 @@ jobs:
         with:
           sdk-channel: ${{ matrix.sdk-channel }}
           sdk-index-url: ${{ matrix.sdk-index-url }}
-        continue-on-error: true  # Allows workflow to continue even if the build step fails, useful for debugging.
+        continue-on-error: true  # Continue even if the build step fails, to allow debugging
+
+      - name: Debug: List contents of build directory
+        run: |
+          echo "Listing contents of the build directory"
+          ls -l ./build
+
+      - name: Debug: Check build output
+        run: |
+          echo "Checking for .fap output"
+          find . -name "*.fap"
 
       - name: Check if artifacts exist
         run: |
@@ -53,7 +63,8 @@ jobs:
           path: ${{ steps.build-app.outputs.fap-artifacts }}
 
       # Add more debug information
-      - name: Display debug information
+      - name: Display build debug information
         run: |
-          echo "Build Outputs:"
-          ls -l ${{ steps.build-app.outputs.fap-artifacts }}
+          echo "Build logs:"
+          cat ./build/logs/* || echo "No logs found"
+
